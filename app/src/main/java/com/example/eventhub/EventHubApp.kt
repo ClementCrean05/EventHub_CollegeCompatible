@@ -52,27 +52,15 @@ fun EventHubApp() {
                     )
                 }
                 composable("events") {
-                    Column(Modifier.fillMaxSize()) {
-                        Button(
-                            onClick = model::addTestEvent,
-                            enabled = !state.isAdding && state.categories.isNotEmpty(),
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            Text(if (state.isAdding) "Saving…" else "Add test event")
-                        }
-                        state.actionMessage?.let { message ->
-                            Text(message, Modifier.padding(horizontal = 16.dp))
-                        }
-                        Box(Modifier.weight(1f)) {
-                            EventsScreen(
-                                events = state.events,
-                                categories = state.categories,
-                                onEventOpen = { id ->
-                                    navController.navigate("details/$id")
-                                }
-                            )
-                        }
-                    }
+                    ManageEventsScreen(
+                        events = state.events,
+                        categories = state.categories,
+                        isSaving = state.isAdding,
+                        actionMessage = state.actionMessage,
+                        onAddEvent = model::saveEvent,
+                        onDeleteEvent = model::deleteEvent,
+                        onEventOpen = { id -> navController.navigate("details/$id") }
+                    )
                 }
                 composable(
                     route = "details/{eventId}",

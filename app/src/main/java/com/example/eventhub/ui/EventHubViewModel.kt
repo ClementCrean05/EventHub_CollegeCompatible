@@ -76,4 +76,43 @@ class EventHubViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
+    fun saveEvent(event: Event) {
+        val current = mutableUiState.value
+        if (current.isLoading || current.isAdding || current.loadError != null) return
+        mutableUiState.update { it.copy(isAdding = true, actionMessage = null) }
+        viewModelScope.launch {
+            try {
+                val id = repository.saveEvent(event)
+                mutableUiState.update { it.copy(actionMessage = "Saved event with ID $id") }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                mutableUiState.update {
+                    it.copy(actionMessage = error.message ?: "Unable to save event")
+                }
+            } finally {
+                mutableUiState.update { it.copy(isAdding = false) }
+            }
+        }
+    }
+
+    fun deleteEvent(eventId: Int) {
+        val current = mutableUiState.value
+        if (current.isLoading || current.isAdding || current.loadError != null) return
+        mutableUiState.update { it.copy(isAdding = true, actionMessage = null) }
+        viewModelScope.launch {
+            try {
+                repository.deleteEvent(eventId)
+                mutableUiState.update { it.copy(actionMessage = "Event deleted") }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                mutableUiState.update {
+                    it.copy(actionMessage = error.message ?: "Unable to delete event")
+                }
+            } finally {
+                mutableUiState.update { it.copy(isAdding = false) }
+            }
+        }
+    }
 }

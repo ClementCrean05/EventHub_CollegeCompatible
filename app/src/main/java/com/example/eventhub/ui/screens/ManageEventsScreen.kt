@@ -24,7 +24,8 @@ fun ManageEventsScreen(
     actionMessage: String?,
     onAddEvent: (Event) -> Unit,
     onDeleteEvent: (Int) -> Unit,
-    onEventOpen: (Int) -> Unit
+    onEventOpen: (Int) -> Unit,
+    Back: () -> Unit
 ) {
     var showAddForm by rememberSaveable { mutableStateOf(false) }
     var selectedCategoryId by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -36,12 +37,20 @@ fun ManageEventsScreen(
     val visibleEvents = if (selectedCategoryId == null) events else
         events.filter { it.categoryId == selectedCategoryId }
 
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        item { Text("Manage events", style = MaterialTheme.typography.headlineMedium) }
+
+
+        item { Text("Manage events", style = MaterialTheme.typography.headlineMedium)
+            Button(onClick = Back) {
+                Text("Back")
+            }
+           }
+
         item {
             Button(onClick = { showAddForm = true },
                 enabled = !isSaving && categories.isNotEmpty()) {

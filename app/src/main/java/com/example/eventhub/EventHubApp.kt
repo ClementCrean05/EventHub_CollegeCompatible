@@ -40,15 +40,40 @@ fun EventHubApp() {
         } else {
             NavHost(
                 navController = navController,
-                startDestination = "home",
+                startDestination = "welcome",
                 modifier = Modifier.padding(padding)
             ) {
+                composable("welcome") {
+                    WelcomeScreen(
+                        onBrowseEvents = {
+                            navController.navigate("events")
+                        },
+                        onAbout = {
+                            navController.navigate("about")
+                        },
+                        onHelp = {
+                            navController.navigate("help")
+                        }
+
+                    )
+                }
+
                 composable("home") {
                     HomeScreen(
                         events = state.events,
                         categories = state.categories,
                         onEventOpen = { id -> navController.navigate("details/$id") },
                         onExplore = { navController.navigate("events") }
+                    )
+                }
+                composable("about") {
+                    AboutScreen(
+                        Back = { navController.navigate("welcome") }
+                    )
+                }
+                composable("help") {
+                    HelpScreen(
+                        Back = { navController.navigate("welcome") }
                     )
                 }
                 composable("events") {
@@ -59,7 +84,8 @@ fun EventHubApp() {
                         actionMessage = state.actionMessage,
                         onAddEvent = model::saveEvent,
                         onDeleteEvent = model::deleteEvent,
-                        onEventOpen = { id -> navController.navigate("details/$id") }
+                        onEventOpen = { id -> navController.navigate("details/$id") },
+                        Back = { navController.navigate("welcome") }
                     )
                 }
                 composable(
